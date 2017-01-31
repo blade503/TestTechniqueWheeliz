@@ -48,14 +48,16 @@ class FeatureContext extends \Behat\MinkExtension\Context\MinkContext
     }
 
     /**
-     * @Then I should see italian flag in the footer
+     * @Then I should have a count equal to the number of element in the list
      */
-    public function iShouldSeeItalianFlagInTheFooter()
+    public function iShouldHaveACountEqualToTheNumberOfElementInTheList()
     {
-        $this->session->visit("https://www.wheeliz.com/it/s/paris");
+        $this->session->visit("https://www.wheeliz.com/fr/s/paris");
         $page = $this->session->getPage();
-        $flag = $page->find('css', '.dropdown > .dropdown-toggle > .visible-xs-inline');
-        return $flag->getHtml() == "Italiano";
+        $matches=array();
+        preg_match("/[0-9]{1,2}/", $page->find('css', '.pageTitle > .text-black')->getHtml() , $matches);
+        return $this->assertSession()->elementsCount('css', '#resultList > .item', $matches[0]);
+
     }
 
     /**
@@ -71,6 +73,18 @@ class FeatureContext extends \Behat\MinkExtension\Context\MinkContext
     }
 
     /**
+     * @Then I should see italian flag in the footer
+     */
+    public function iShouldSeeItalianFlagInTheFooter()
+    {
+        $this->session->visit("https://www.wheeliz.com/it/s/paris");
+        $page = $this->session->getPage();
+        $flag = $page->find('css', '.dropdown > .dropdown-toggle > .visible-xs-inline');
+        return $flag->getHtml() == "Italiano";
+    }
+
+
+    /**
      * @Then I should receive :arg1 error
      */
     public function iShouldReceiveError($arg1)
@@ -79,10 +93,5 @@ class FeatureContext extends \Behat\MinkExtension\Context\MinkContext
         return $this->session->getStatusCode() == $arg1;
 
     }
-
-
-
-
-
 
 }
